@@ -1,0 +1,28 @@
+# Core Deep Learning
+torch
+torchvision
+torchaudio
+
+# YOLOv8 - Object Detection
+ultralytics
+
+# Image Processing
+opencv-python
+Pillow
+
+# Data Handling
+numpy
+pandas
+pyyaml
+
+# Visualization & Plotting
+matplotlib
+seaborn
+
+# Jupyter Notebook support
+jupyter
+notebook
+
+# Utility
+tqdm
+scikit-learn

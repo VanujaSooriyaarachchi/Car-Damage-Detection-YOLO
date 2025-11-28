@@ -1,0 +1,21 @@
+# Ignore ALL datasets
+data/dataset1/
+data/dataset2/
+data/dataset3/
+data/car_damage_all/
+data/car_damage_yolo/
+
+# Ignore YOLO runs and temporary training outputs
+runs/
+models/runs/
+
+# Ignore weights
+*.pt
+
+# Ignore large backup files
+*.zip
+*.rar
+
+# Python cache files
+__pycache__/
+*.pyc

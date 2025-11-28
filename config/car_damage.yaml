@@ -1,0 +1,15 @@
+path: ../data/car_damage_yolo
+train: images/train
+val: images/val
+test: images/test
+
+nc: 7
+
+names:
+  0: dent
+  1: scratch
+  2: crack
+  3: glass shatter
+  4: lamp broken
+  5: tire flat
+  6: rust
