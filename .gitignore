@@ -5,6 +5,9 @@ data/dataset1/
 data/dataset2/
 data/dataset3/
 
+# Ignore Testing Images
+assets/
+
 # Ignore YOLO runs and heavy files
 models/runs/**/*.pt
 models/runs/**/weights/
