@@ -1,15 +1,18 @@
-path: ../data/car_damage_yolo
-train: images/train
-val: images/val
-test: images/test
+# Car Damage Detection – Dataset 3 (6 classes)
 
-nc: 7
+# Your dataset3 root folder
+path: D:/IIT/4 th Year/Machine Vision/Course Work/Car-Damage-Detection-YOLO/data/dataset3
 
+# Folders relative to "path"
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 6
 names:
-  0: dent
-  1: scratch
-  2: crack
-  3: glass shatter
-  4: lamp broken
+  0: crack
+  1: dent
+  2: glass shatter
+  3: lamp broken
+  4: scratch
   5: tire flat
-  6: rust

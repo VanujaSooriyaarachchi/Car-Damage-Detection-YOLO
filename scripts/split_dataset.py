@@ -18,8 +18,12 @@ LBL_TRAIN = os.path.join(YOLO_ROOT, "labels", "train")
 LBL_VAL   = os.path.join(YOLO_ROOT, "labels", "val")
 LBL_TEST  = os.path.join(YOLO_ROOT, "labels", "test")
 
+# Create output directories
 for d in [IMG_TRAIN, IMG_VAL, IMG_TEST, LBL_TRAIN, LBL_VAL, LBL_TEST]:
     os.makedirs(d, exist_ok=True)
+
+# For reproducible splits
+random.seed(42)
 
 all_images = [f for f in os.listdir(ALL_IMG_DIR)
               if f.lower().endswith((".jpg", ".jpeg", ".png"))]
@@ -35,7 +39,9 @@ train_files = all_images[:n_train]
 val_files   = all_images[n_train:n_train + n_val]
 test_files  = all_images[n_train + n_val:]
 
-def copy_split(files, img_dst, lbl_dst):
+
+def copy_split(files, img_dst, lbl_dst, split_name):
+    print(f"Copying {len(files)} images to {split_name} split...")
     for img_name in files:
         base, ext = os.path.splitext(img_name)
         lbl_name = base + ".txt"
@@ -50,8 +56,16 @@ def copy_split(files, img_dst, lbl_dst):
         shutil.copy2(img_src, os.path.join(img_dst, img_name))
         shutil.copy2(lbl_src, os.path.join(lbl_dst, lbl_name))
 
-copy_split(train_files, IMG_TRAIN, LBL_TRAIN)
-copy_split(val_files,   IMG_VAL,   LBL_VAL)
-copy_split(test_files,  IMG_TEST,  LBL_TEST)
 
-print("Train:", len(train_files), "Val:", len(val_files), "Test:", len(test_files))
+print("\n=== Splitting merged data into YOLO train/val/test ===")
+print("Total images in pool:", n_total)
+
+copy_split(train_files, IMG_TRAIN, LBL_TRAIN, "train")
+copy_split(val_files,   IMG_VAL,   LBL_VAL,   "val")
+copy_split(test_files,  IMG_TEST,  LBL_TEST,  "test")
+
+print("\nFinal split sizes:")
+print("  Train:", len(train_files))
+print("  Val:  ", len(val_files))
+print("  Test: ", len(test_files))
+print("\nSplit complete. Use car_damage.yaml to train YOLO.")

@@ -1,92 +1,92 @@
 import os
 import shutil
 
-PROJECT_ROOT = r"D:\IIT\4 th Year\Machine Vision\Course Work\Car-Damage-Detection-YOLO"
-DATA_ROOT = os.path.join(PROJECT_ROOT, "data")
+# Where the final merged dataset will live
+MERGED_ROOT = r"D:\IIT\4 th Year\Machine Vision\Course Work\Car-Damage-Detection-YOLO\data\car_damage_yolo"
 
-# Dataset roots
-DS1_ROOT = os.path.join(DATA_ROOT, "dataset1")
-DS2_ROOT = os.path.join(DATA_ROOT, "dataset2")
-DS3_ROOT = os.path.join(DATA_ROOT, "dataset3")
+MERGED_IMG = os.path.join(MERGED_ROOT, "images")
+MERGED_LAB = os.path.join(MERGED_ROOT, "labels")
 
-# Output: combined pool
-ALL_IMG_DIR = os.path.join(DATA_ROOT, "car_damage_all", "images")
-ALL_LBL_DIR = os.path.join(DATA_ROOT, "car_damage_all", "labels")
+# create target split folders
+for split in ["train", "val", "test"]:
+    os.makedirs(os.path.join(MERGED_IMG, split), exist_ok=True)
+    os.makedirs(os.path.join(MERGED_LAB, split), exist_ok=True)
 
-os.makedirs(ALL_IMG_DIR, exist_ok=True)
-os.makedirs(ALL_LBL_DIR, exist_ok=True)
+# All three datasets now share the same structure: train / valid / test
+DATASETS = [
+    {
+        "name": "ds1",
+        "root": r"D:\IIT\4 th Year\Machine Vision\Course Work\Car-Damage-Detection-YOLO\data\dataset1",
+    },
+    {
+        "name": "ds2",
+        "root": r"D:\IIT\4 th Year\Machine Vision\Course Work\Car-Damage-Detection-YOLO\data\dataset2",
+    },
+    {
+        "name": "ds3",
+        "root": r"D:\IIT\4 th Year\Machine Vision\Course Work\Car-Damage-Detection-YOLO\data\dataset3",
+    },
+]
 
-print("ALL_IMG_DIR:", ALL_IMG_DIR)
-print("ALL_LBL_DIR:", ALL_LBL_DIR)
 
-# Helper to copy images+labels with a prefix
-def copy_dataset(src_root, split_map, prefix):
+def merge_split(dataset, target_split):
     """
-    src_root: path to datasetX root
-    split_map: list of (split_name, src_split_folder_name)
-       e.g. [("train", "train"), ("val", "valid"), ("test", "test")]
-    prefix: string like "D1", "D2", "D3"
+    Merge a single split (train/val/test) from one dataset into the merged dataset.
+    Source split is:
+        train -> train
+        val   -> valid
+        test  -> test
     """
-    for logical_split, src_split_name in split_map:
-        img_dir = os.path.join(src_root, src_split_name, "images")
-        lbl_dir = os.path.join(src_root, src_split_name, "labels")
+    ds_name = dataset["name"]
+    ds_root = dataset["root"]
 
-        if not os.path.isdir(img_dir):
-            print(f"[{prefix}] WARNING: images dir not found: {img_dir}")
+    if target_split == "train":
+        src_split = "train"
+    elif target_split == "val":
+        src_split = "valid"
+    else:
+        src_split = "test"
+
+    src_img_dir = os.path.join(ds_root, src_split, "images")
+    src_lab_dir = os.path.join(ds_root, src_split, "labels")
+
+    if not os.path.isdir(src_img_dir) or not os.path.isdir(src_lab_dir):
+        print(f"{ds_name}: No '{src_split}' split found. Skipping.")
+        return
+
+    dst_img_dir = os.path.join(MERGED_IMG, target_split)
+    dst_lab_dir = os.path.join(MERGED_LAB, target_split)
+
+    count = 0
+
+    for fname in os.listdir(src_img_dir):
+        if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
             continue
-        if not os.path.isdir(lbl_dir):
-            print(f"[{prefix}] WARNING: labels dir not found: {lbl_dir}")
+
+        stem, ext = os.path.splitext(fname)
+        src_img_path = os.path.join(src_img_dir, fname)
+        src_lab_path = os.path.join(src_lab_dir, stem + ".txt")
+
+        if not os.path.exists(src_lab_path):
+            # skip images without labels
             continue
 
-        print(f"[{prefix}] Copying from split '{logical_split}' ({img_dir})")
+        # Make filename unique by prefixing dataset name
+        new_stem = f"{ds_name}_{stem}"
+        dst_img_path = os.path.join(dst_img_dir, new_stem + ext)
+        dst_lab_path = os.path.join(dst_lab_dir, new_stem + ".txt")
 
-        for fname in os.listdir(img_dir):
-            if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
-                continue
+        shutil.copy2(src_img_path, dst_img_path)
+        shutil.copy2(src_lab_path, dst_lab_path)
+        count += 1
 
-            base, ext = os.path.splitext(fname)
-            img_src = os.path.join(img_dir, fname)
-            lbl_src = os.path.join(lbl_dir, base + ".txt")
+    print(f"{ds_name}: merged {count} images into {target_split}/")
 
-            if not os.path.exists(lbl_src):
-                print(f"[{prefix}] WARNING: no label for {img_src}")
-                continue
 
-            # New base name with prefix & split for uniqueness
-            new_base = f"{prefix}_{logical_split}_{base}"
-            new_img_name = new_base + ext
-            new_lbl_name = new_base + ".txt"
+if __name__ == "__main__":
+    for split in ["train", "val", "test"]:
+        print(f"\nMerging split: {split}")
+        for ds in DATASETS:
+            merge_split(ds, split)
 
-            shutil.copy2(img_src, os.path.join(ALL_IMG_DIR, new_img_name))
-            shutil.copy2(lbl_src, os.path.join(ALL_LBL_DIR, new_lbl_name))
-
-# Define split names for each dataset
-
-# Dataset1 uses "train", "valid", "test"
-DS1_SPLITS = [
-    ("train", "train"),
-    ("val",   "valid"),
-    ("test",  "test"),
-]
-
-# Dataset2 uses "train", "val", "test"
-DS2_SPLITS = [
-    ("train", "train"),
-    ("val",   "val"),
-    ("test",  "test"),
-]
-
-# Dataset3 uses "train", "valid", "test"
-DS3_SPLITS = [
-    ("train", "train"),
-    ("val",   "valid"),
-    ("test",  "test"),
-]
-
-# Copy all three datasets into the combined pool
-copy_dataset(DS1_ROOT, DS1_SPLITS, prefix="D1")
-copy_dataset(DS2_ROOT, DS2_SPLITS, prefix="D2")
-copy_dataset(DS3_ROOT, DS3_SPLITS, prefix="D3")
-
-print("Total combined images:", len(os.listdir(ALL_IMG_DIR)))
-print("Total combined labels:", len(os.listdir(ALL_LBL_DIR)))
+    print("\nDone merging train / val / test into car_damage_yolo/")
