@@ -1,0 +1,49 @@
+{
+  "checkin_path": "C:\\Users\\ASUS\\Downloads\\not_damage.jpg",
+  "checkout_path": "C:\\Users\\ASUS\\Downloads\\damage.jpg",
+  "same_car": false,
+  "same_car_score": 0.3461021505376344,
+  "same_car_details": {
+    "phash_sim": 0.5625,
+    "orb_sim": 0.021505376344086023,
+    "phash_dist": 28
+  },
+  "checkin_damage_counts": {
+    "scratch": 3
+  },
+  "checkout_damage_counts": {
+    "dent": 2
+  },
+  "new_damage_counts": {
+    "dent": 2
+  },
+  "new_damages": [
+    {
+      "cls_id": 1,
+      "cls_name": "dent",
+      "conf": 0.4075429439544678,
+      "xyxy": [
+        203.02467346191406,
+        61.6435432434082,
+        262.9214782714844,
+        144.84136962890625
+      ]
+    },
+    {
+      "cls_id": 1,
+      "cls_name": "dent",
+      "conf": 0.23488269746303558,
+      "xyxy": [
+        202.5828094482422,
+        61.583282470703125,
+        295.6719665527344,
+        158.33859252929688
+      ]
+    }
+  ],
+  "params": {
+    "conf": 0.4,
+    "car_thr": 0.55,
+    "iou_thr": 0.3
+  }
+}
