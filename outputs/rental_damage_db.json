@@ -7,7 +7,7 @@
       312,
       306
     ],
-    "before_image": "C:\\Users\\ASUS\\Downloads\\before.jpg",
+    "before_image": "D:\\IIT\\4 th Year\\Machine Vision\\Course Work\\Car-Damage-Detection-YOLO\\assets\\before.jpg",
     "before_damages": [
       {
         "class": "glass shatter",
